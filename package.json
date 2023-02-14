@@ -15,5 +15,9 @@
   "bugs": {
     "url": "https://github.com/RotcivL/FSO-GraphQL/issues"
   },
-  "homepage": "https://github.com/RotcivL/FSO-GraphQL#readme"
+  "homepage": "https://github.com/RotcivL/FSO-GraphQL#readme",
+  "dependencies": {
+    "@apollo/server": "^4.3.3",
+    "graphql": "^16.6.0"
+  }
 }
