@@ -1,0 +1,19 @@
+{
+  "name": "fso-graphql",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/RotcivL/FSO-GraphQL.git"
+  },
+  "author": "RotcivL",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/RotcivL/FSO-GraphQL/issues"
+  },
+  "homepage": "https://github.com/RotcivL/FSO-GraphQL#readme"
+}
