@@ -176,10 +176,9 @@ const resolvers = {
       const book = { ...args, id: uuid() }
       books = books.concat(book)
 
-      if (!authors.some((a) => a.name === args.name)) {
+      if (!authors.some((a) => a.name === args.author)) {
         const author = { name: args.author, id: uuid() }
         authors = authors.concat(author)
-        console.log(authors)
       }
       return book
     },
