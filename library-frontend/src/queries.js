@@ -80,3 +80,11 @@ export const FILTER_BOOKS_GENRE = gql`
     }
   }
 `
+
+export const CURRENT_USER = gql`
+  query {
+    me {
+      favouriteGenre
+    }
+  }
+`

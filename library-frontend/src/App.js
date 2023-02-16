@@ -8,12 +8,13 @@ import {
 } from 'react-router-dom'
 
 import { useQuery, useApolloClient } from '@apollo/client'
-import { ALL_AUTHORS, ALL_BOOKS } from './queries'
+import { ALL_AUTHORS, ALL_BOOKS, CURRENT_USER } from './queries'
 
 import Authors from './components/Authors'
 import Books from './components/Books'
 import NewBook from './components/NewBook'
 import LoginForm from './components/LoginForm'
+import Recommedation from './components/Recommendation'
 
 const App = () => {
   const padding = {
@@ -23,6 +24,9 @@ const App = () => {
   const [token, setToken] = useState()
   const resultAuthors = useQuery(ALL_AUTHORS)
   const resultBooks = useQuery(ALL_BOOKS)
+  const resultMe = useQuery(CURRENT_USER, {
+    skip: !token,
+  })
   const client = useApolloClient()
 
   useEffect(() => {
@@ -35,6 +39,8 @@ const App = () => {
   if (resultAuthors.loading || resultBooks.loading) {
     return <div>loading...</div>
   }
+
+  console.log(resultMe)
 
   const logout = () => {
     setToken(null)
@@ -56,6 +62,9 @@ const App = () => {
             <Link style={padding} to="/add">
               add book
             </Link>
+            <Link style={padding} to="/recommendations">
+              recommend
+            </Link>
             <button onClick={logout}>logout</button>
           </>
         ) : (
@@ -75,6 +84,14 @@ const App = () => {
           element={<Books books={resultBooks.data.allBooks} />}
         />
         <Route path="/add" element={<NewBook />} />
+        <Route
+          path="/recommendations"
+          element={
+            <Recommedation
+              genre={resultMe.data ? resultMe.data.me.favouriteGenre : null}
+            />
+          }
+        />
         <Route
           path="/login"
           element={
