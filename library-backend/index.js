@@ -1,5 +1,6 @@
 const { ApolloServer } = require('@apollo/server')
 const { startStandaloneServer } = require('@apollo/server/standalone')
+const { GraphQLError } = require('graphql')
 
 const mongoose = require('mongoose')
 mongoose.set('strictQuery', false)
@@ -181,11 +182,37 @@ const resolvers = {
 
   Mutation: {
     addBook: async (root, args) => {
+      const exists = await Book.exists({ title: args.title })
+      if (exists) {
+        throw new GraphQLError('Title must be unique', {
+          extensions: {
+            code: 'BAD_USER_INPUT',
+            invalidArgs: args.title,
+          },
+        })
+      }
+      if (args.title.length < 5) {
+        throw new GraphQLError('Title must be 5 characters long', {
+          extensions: {
+            code: 'BAD_USER_INPUT',
+            invalidArgs: args.title,
+          },
+        })
+      }
+      if (args.author.length < 4) {
+        throw new GraphQLError("Author's name must be 4 characters long", {
+          extensions: {
+            code: 'BAD_USER_INPUT',
+            invalidArgs: args.author,
+          },
+        })
+      }
+
       let author = await Author.findOne({ name: args.author })
       if (!author) {
-        const newAuthor = new Author({ name: args.author })
+        author = new Author({ name: args.author })
         try {
-          author = await newAuthor.save()
+          await author.save()
         } catch (error) {
           throw new GraphQLError('Saving author failed', {
             extensions: {
@@ -208,7 +235,7 @@ const resolvers = {
           },
         })
       }
-      return book.populate('Author', { name: 1, born: 1 })
+      return book.populate('author', { name: 1, born: 1 })
     },
     editAuthor: async (root, args) => {
       const author = await Author.findOne({ name: args.name })
