@@ -40,8 +40,6 @@ const App = () => {
     return <div>loading...</div>
   }
 
-  console.log(resultMe)
-
   const logout = () => {
     setToken(null)
     localStorage.clear()
@@ -83,13 +81,18 @@ const App = () => {
           path="/books"
           element={<Books books={resultBooks.data.allBooks} />}
         />
-        <Route path="/add" element={<NewBook />} />
+        <Route
+          path="/add"
+          element={token ? <NewBook /> : <Navigate to="/login" />}
+        />
         <Route
           path="/recommendations"
           element={
-            <Recommedation
-              genre={resultMe.data ? resultMe.data.me.favouriteGenre : null}
-            />
+            token ? (
+              <Recommedation genre={resultMe.data?.me.favouriteGenre} />
+            ) : (
+              <Navigate to="/login" />
+            )
           }
         />
         <Route
