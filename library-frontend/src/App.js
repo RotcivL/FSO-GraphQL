@@ -8,7 +8,7 @@ import {
 } from 'react-router-dom'
 
 import { useQuery, useApolloClient } from '@apollo/client'
-import { ALL_AUTHORS_BOOKS } from './queries'
+import { ALL_AUTHORS, ALL_BOOKS } from './queries'
 
 import Authors from './components/Authors'
 import Books from './components/Books'
@@ -21,7 +21,8 @@ const App = () => {
   }
 
   const [token, setToken] = useState()
-  const result = useQuery(ALL_AUTHORS_BOOKS)
+  const resultAuthors = useQuery(ALL_AUTHORS)
+  const resultBooks = useQuery(ALL_BOOKS)
   const client = useApolloClient()
 
   useEffect(() => {
@@ -31,7 +32,7 @@ const App = () => {
     }
   }, [])
 
-  if (result.loading) {
+  if (resultAuthors.loading || resultBooks.loading) {
     return <div>loading...</div>
   }
 
@@ -67,9 +68,12 @@ const App = () => {
       <Routes>
         <Route
           path="/"
-          element={<Authors authors={result.data.allAuthors} />}
+          element={<Authors authors={resultAuthors.data.allAuthors} />}
         />
-        <Route path="/books" element={<Books books={result.data.allBooks} />} />
+        <Route
+          path="/books"
+          element={<Books books={resultBooks.data.allBooks} />}
+        />
         <Route path="/add" element={<NewBook />} />
         <Route
           path="/login"

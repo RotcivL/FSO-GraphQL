@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { useMutation } from '@apollo/client'
-import { ALL_AUTHORS_BOOKS, EDIT_YEAR } from '../queries'
+import { ALL_AUTHORS, EDIT_YEAR } from '../queries'
 import Select from 'react-select'
 
 const Authors = ({ authors }) => {
@@ -12,7 +12,7 @@ const Authors = ({ authors }) => {
   })
 
   const [updatedAuthor] = useMutation(EDIT_YEAR, {
-    refetchQueries: [{ query: ALL_AUTHORS_BOOKS }],
+    refetchQueries: [{ query: ALL_AUTHORS }],
   })
 
   const submit = async (event) => {
