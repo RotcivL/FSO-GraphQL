@@ -8,7 +8,13 @@ import {
 } from 'react-router-dom'
 
 import { useQuery, useApolloClient, useSubscription } from '@apollo/client'
-import { ALL_AUTHORS, ALL_BOOKS, BOOK_ADDED, CURRENT_USER } from './queries'
+import {
+  ALL_AUTHORS,
+  ALL_BOOKS,
+  BOOK_ADDED,
+  CURRENT_USER,
+  FILTER_BOOKS_GENRE,
+} from './queries'
 
 import Authors from './components/Authors'
 import Books from './components/Books'
@@ -39,7 +45,29 @@ const App = () => {
   useSubscription(BOOK_ADDED, {
     onData: ({ data }) => {
       const addedBook = data.data.bookAdded
-      window.alert(`${addedBook.title} added`)
+      window.alert(`new book ${addedBook.title} added`)
+      const genres = addedBook.genres
+
+      client.cache.updateQuery({ query: ALL_BOOKS }, ({ allBooks }) => {
+        return {
+          allBooks: allBooks.concat(addedBook),
+        }
+      })
+
+      genres.forEach((genre) => {
+        try {
+          client.cache.updateQuery(
+            { query: FILTER_BOOKS_GENRE, variables: { genre } },
+            ({ allBooks }) => {
+              return {
+                allBooks: allBooks.concat(addedBook),
+              }
+            }
+          )
+        } catch (error) {
+          console.log('data has not been loaded yet')
+        }
+      })
     },
   })
 
