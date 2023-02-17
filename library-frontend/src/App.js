@@ -7,8 +7,8 @@ import {
   Navigate,
 } from 'react-router-dom'
 
-import { useQuery, useApolloClient } from '@apollo/client'
-import { ALL_AUTHORS, ALL_BOOKS, CURRENT_USER } from './queries'
+import { useQuery, useApolloClient, useSubscription } from '@apollo/client'
+import { ALL_AUTHORS, ALL_BOOKS, BOOK_ADDED, CURRENT_USER } from './queries'
 
 import Authors from './components/Authors'
 import Books from './components/Books'
@@ -35,6 +35,13 @@ const App = () => {
       setToken(userToken)
     }
   }, [])
+
+  useSubscription(BOOK_ADDED, {
+    onData: ({ data }) => {
+      const addedBook = data.data.bookAdded
+      window.alert(`${addedBook.title} added`)
+    },
+  })
 
   if (resultAuthors.loading || resultBooks.loading) {
     return <div>loading...</div>
