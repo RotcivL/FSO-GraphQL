@@ -15,7 +15,9 @@ const jwt = require('jsonwebtoken')
 const mongoose = require('mongoose')
 mongoose.set('strictQuery', false)
 const User = require('./models/user')
+const Book = require('./models/book')
 require('dotenv').config()
+const DataLoader = require('dataloader')
 
 const typeDefs = require('./schema')
 const resolvers = require('./resolvers')
@@ -31,10 +33,15 @@ mongoose
     console.log('error connection to MongoDB:', error.message)
   })
 
-const server = new ApolloServer({
-  typeDefs,
-  resolvers,
-})
+const batchBooks = async (keys) => {
+  const books = await Book.find({
+    author: {
+      $in: keys,
+    },
+  })
+
+  return keys.map((key) => books.filter((book) => book.author.equals(key)))
+}
 
 const start = async () => {
   const app = express()
@@ -76,7 +83,17 @@ const start = async () => {
             process.env.JWT_SECRET
           )
           const currentUser = await User.findById(decodedToken.id)
-          return { currentUser }
+          return {
+            currentUser,
+            loaders: {
+              book: new DataLoader((keys) => batchBooks(keys)),
+            },
+          }
+        }
+        return {
+          loaders: {
+            book: new DataLoader((keys) => batchBooks(keys)),
+          },
         }
       },
     })

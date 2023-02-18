@@ -30,8 +30,8 @@ const resolvers = {
   },
 
   Author: {
-    bookCount: async (root) => {
-      const books = await Book.find({ author: root._id })
+    bookCount: async (root, args, { loaders }) => {
+      const books = await loaders.book.load(root._id)
       return books.length
     },
   },
